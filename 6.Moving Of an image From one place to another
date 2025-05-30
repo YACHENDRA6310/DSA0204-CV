@@ -1,0 +1,22 @@
+import cv2
+
+img = cv2.imread(r"E:\cv\Picture1.png")
+if img is None:
+    print("Error: Unable to load image."); exit()
+
+cv2.namedWindow('Move Image', cv2.WINDOW_NORMAL)
+x, y, step = 100, 100, 5
+
+while True:
+    disp = img.copy()
+    cv2.rectangle(disp, (x, y), (x + img.shape[1], y + img.shape[0]), (0, 255, 0), 2)
+    cv2.imshow('Move Image', disp)
+
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'): break
+    elif key == ord('w'): y -= step
+    elif key == ord('s'): y += step
+    elif key == ord('a'): x -= step
+    elif key == ord('d'): x += step
+
+cv2.destroyAllWindows()
