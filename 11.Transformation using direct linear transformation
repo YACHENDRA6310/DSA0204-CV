@@ -1,0 +1,26 @@
+import cv2
+import numpy as np
+
+def compute_homography_dlt(src_pts, dst_pts):
+    """Compute homography using Direct Linear Transformation (DLT)."""
+    A = []
+    for i in range(4):
+        x, y = src_pts[i][0], src_pts[i][1]
+        x_, y_ = dst_pts[i][0], dst_pts[i][1]
+        A.append([-x, -y, -1,  0,  0,  0, x * x_, y * x_, x_])
+        A.append([ 0,  0,  0, -x, -y, -1, x * y_, y * y_, y_])
+
+    A = np.array(A)
+    U, S, Vt = np.linalg.svd(A)
+    H = Vt[-1].reshape((3, 3))
+    return H / H[2, 2]
+img = cv2.imread(r"E:\cv\picture8.jpeg")
+src_pts = np.float32([[100, 100], [400, 100], [100, 400], [400, 400]])
+dst_pts = np.float32([[0, 0], [300, 0], [0, 300], [300, 300]])
+H = compute_homography_dlt(src_pts, dst_pts)
+warped_img = cv2.warpPerspective(img, H, (300, 300))
+cv2.imshow('Original Image', img)
+cv2.imshow('Warped Image using DLT', warped_img)
+cv2.imwrite('dlt_transformed.jpg', warped_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
